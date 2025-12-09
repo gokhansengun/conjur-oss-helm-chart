@@ -383,7 +383,7 @@ The following table lists the configurable parameters of the Conjur Open Source 
 |`image.pullPolicy`|Pull policy for Conjur Docker image|`"Always"`|
 |`logLevel`|Conjur log level. Set to 'debug' to enable detailed debug logs in the Conjur container |`"info"`|
 |`nginx.image.repository`|NGINX Docker image repository|`"nginx"`|
-|`nginx.image.tag`|NGINX Docker image tag|`"1.15"`|
+|`nginx.image.tag`|NGINX Docker image tag|`"1.29"`|
 |`nginx.image.pullPolicy`|Pull policy for NGINX Docker image|`"IfNotPresent"`|
 |`nginx.resources`|Resource requests and limits for nginx pod|`{}`|
 |`openshift.enabled`|Indicates that Conjur is to be installed on an OpenShift platform|`false`|

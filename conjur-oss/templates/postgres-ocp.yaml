@@ -6,6 +6,7 @@ metadata:
   annotations:
     template.openshift.io/expose-uri: postgres://{.spec.clusterIP}:{.spec.ports[?(.name=="postgresql")].port}
   name: {{ .Release.Name }}-postgres
+  namespace: {{ .Release.Namespace }}
   labels: &AppPostgresServiceLabels
     app: {{ template "conjur-oss.name" . }}-postgres
     chart: {{ template "conjur-oss.chart" . }}
@@ -28,6 +29,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}-postgres
+  namespace: {{ .Release.Namespace }}
   labels: &AppPostgresLabels
     app: {{ template "conjur-oss.name" . }}-postgres
     chart: {{ template "conjur-oss.chart" . }}

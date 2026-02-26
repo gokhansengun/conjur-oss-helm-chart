@@ -3,6 +3,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Release.Name }}-conjur-oss-pvc
+  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "conjur-oss.name" . }}-postgres
     chart: {{ template "conjur-oss.chart" . }}

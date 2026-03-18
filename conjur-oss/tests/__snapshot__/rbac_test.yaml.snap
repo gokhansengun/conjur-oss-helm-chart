@@ -22,7 +22,6 @@ should match snapshot of default values:
         heritage: Helm
         release: RELEASE-NAME
       name: RELEASE-NAME-conjur-authenticator
-      namespace: NAMESPACE
     rules:
       - apiGroups:
           - ""
@@ -67,7 +66,6 @@ should match snapshot of default values:
         heritage: Helm
         release: RELEASE-NAME
       name: RELEASE-NAME-conjur-authenticator
-      namespace: NAMESPACE
     roleRef:
       apiGroup: rbac.authorization.k8s.io
       kind: ClusterRole

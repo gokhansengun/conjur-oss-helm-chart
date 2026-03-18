@@ -21,7 +21,6 @@ apiVersion: {{ include "conjur-oss.rbac-api" . }}
 kind: ClusterRole
 metadata:
   name: {{ .Release.Name }}-conjur-authenticator
-  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "conjur-oss.name" . }}
     chart: {{ template "conjur-oss.chart" . }}
@@ -54,7 +53,6 @@ kind: ClusterRoleBinding
 apiVersion: {{ include "conjur-oss.rbac-api" . }}
 metadata:
   name: {{ .Release.Name }}-conjur-authenticator
-  namespace: {{ .Release.Namespace }}
   labels:
     app: {{ template "conjur-oss.name" . }}
     chart: {{ template "conjur-oss.chart" . }}

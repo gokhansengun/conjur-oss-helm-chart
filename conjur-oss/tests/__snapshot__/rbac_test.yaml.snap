@@ -10,6 +10,7 @@ should match snapshot of default values:
         heritage: Helm
         release: RELEASE-NAME
       name: RELEASE-NAME-conjur-oss
+      namespace: NAMESPACE
   2: |
     apiVersion: rbac.authorization.k8s.io/v1alpha1
     kind: ClusterRole

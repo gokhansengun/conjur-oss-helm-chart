@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "conjur-oss.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels: &AppConjurLabels
     app: {{ template "conjur-oss.name" . }}
     chart: {{ template "conjur-oss.chart" . }}

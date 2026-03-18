@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## [2.1.2] - 2026-02-26
+
+### Changed
+
+- Templates now include namespace property
+
 ## [2.1.1] - 2025-11-21
 
 ### Added

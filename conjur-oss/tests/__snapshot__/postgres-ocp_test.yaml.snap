@@ -13,6 +13,7 @@ should match snapshot of default values:
         heritage: Helm
         release: RELEASE-NAME
       name: RELEASE-NAME-postgres
+      namespace: NAMESPACE
     spec:
       ports:
         - name: postgresql
@@ -38,6 +39,7 @@ should match snapshot of default values:
         heritage: Helm
         release: RELEASE-NAME
       name: RELEASE-NAME-postgres
+      namespace: NAMESPACE
     spec:
       replicas: 1
       selector:

@@ -11,3 +11,4 @@ values-private.yaml
 # Example temp files
 examples/kubernetes-in-docker/temp*
 .debug/
+examples/common/temp

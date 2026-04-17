@@ -57,15 +57,26 @@ elif [[ $USE_DOCKER_LOCAL_REGISTRY == "true" ]]; then
   reg_ip="$(docker inspect -f '{{.NetworkSettings.Networks.kind.IPAddress}}' "${reg_name}")"
   echo "Registry IP: ${reg_ip}"
 
-  # create a cluster with the local registry enabled in containerd
-  cat <<EOF | kind create cluster --name "${KIND_CLUSTER_NAME}" --config=-
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-containerdConfigPatches: 
-- |-
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:${reg_port}"]
-    endpoint = ["http://${reg_ip}:${reg_port}"]
-EOF
+  # Create the KinD cluster (no containerd patch needed; we configure it post-creation)
+  kind create cluster --name "${KIND_CLUSTER_NAME}"
+
+  # Configure the local registry mirror in containerd inside the node using hosts.d
+  # (containerd v2 no longer supports the legacy 'mirrors' TOML patch)
+  node_container="${KIND_CLUSTER_NAME}-control-plane"
+  hosts_toml="$(mktemp)"
+  cat > "${hosts_toml}" <<HOSTSEOF
+server = "http://localhost:${reg_port}"
+
+[host."http://${reg_ip}:${reg_port}"]
+  capabilities = ["pull", "resolve", "push"]
+  skip_verify = true
+HOSTSEOF
+
+  docker exec "${node_container}" mkdir -p "/etc/containerd/certs.d/localhost:${reg_port}"
+  docker cp "${hosts_toml}" "${node_container}:/etc/containerd/certs.d/localhost:${reg_port}/hosts.toml"
+  rm -f "${hosts_toml}"
+  docker exec "${node_container}" systemctl restart containerd
+  echo "Containerd registry mirror configured for localhost:${reg_port}"
 
 else
   kind create cluster --name "$KIND_CLUSTER_NAME"

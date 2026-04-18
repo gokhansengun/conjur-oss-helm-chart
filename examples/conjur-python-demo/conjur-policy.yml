@@ -1,0 +1,15 @@
+# Load with: conjur policy load -b conjur/authn-k8s/my-authenticator-id/apps -f conjur-policy.yml
+# The apps layer is already a member of /test-app which grants access to secretless DB secrets.
+
+- !host
+  id: conjur-python-demo
+  annotations:
+    authn-k8s/namespace: app-test
+    authn-k8s/service-account: conjur-python-demo
+    authn-k8s/deployment: conjur-python-demo
+    authn-k8s/authentication-container-name: conjur-python-demo
+    kubernetes: "true"
+
+- !grant
+  role: !layer
+  member: !host conjur-python-demo

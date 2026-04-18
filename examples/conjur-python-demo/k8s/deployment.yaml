@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: conjur-python-demo
+  namespace: app-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conjur-python-demo
+  template:
+    metadata:
+      labels:
+        app: conjur-python-demo
+    spec:
+      serviceAccountName: conjur-python-demo
+      containers:
+      - name: conjur-python-demo
+        image: localhost:5000/conjur-python-demo:latest
+        imagePullPolicy: Always
+        env:
+        - name: CONJUR_APPLIANCE_URL
+          value: "https://conjur-oss.conjur-oss.svc.cluster.local"
+        - name: CONJUR_ACCOUNT
+          value: "myConjurAccount"
+        - name: CONJUR_AUTHN_URL
+          value: "https://conjur-oss.conjur-oss.svc.cluster.local/authn-k8s/my-authenticator-id"
+        - name: CONJUR_AUTHN_LOGIN
+          value: "host/conjur/authn-k8s/my-authenticator-id/apps/conjur-python-demo"
+        - name: CONJUR_SSL_CERT_FILE
+          value: "/etc/conjur/ssl/ca.pem"
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - name: conjur-ssl-ca
+          mountPath: /etc/conjur/ssl/ca.pem
+          subPath: ssl-certificate
+          readOnly: true
+      volumes:
+      - name: conjur-ssl-ca
+        configMap:
+          name: app-test

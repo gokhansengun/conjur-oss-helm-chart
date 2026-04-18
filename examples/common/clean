@@ -1,0 +1,72 @@
+#!/bin/bash
+
+set -euo pipefail
+
+. utils.sh
+
+print_usage() {
+  echo "Clean up all Docker and Kubernetes resources created by the 'start' script."
+  echo "This includes:"
+  echo "  - Delete the KinD cluster (removes all Kubernetes resources)."
+  echo "  - Remove the local Docker registry container."
+  echo "  - Remove the Docker 'kind' network."
+  echo "  - Prune dangling Docker volumes left by the cluster."
+  echo "  - Remove cloned demo scripts in temp/."
+  echo
+  echo "Syntax:"
+  echo "$0 [arguments]"
+  echo
+  echo "Options:"
+  echo "-h                        Show help"
+  echo "-c <customize-env-file>   Customization file to use (default: customize.env)"
+  echo "-p <env-file>             Environment file to use"
+  exit 0
+}
+
+# Default values (match 'start')
+customize_file="customize.env"
+env_file="../kubernetes-in-docker/0_export_env_vars.sh"
+
+while getopts 'c:hp:' flag; do
+  case "${flag}" in
+    c) customize_file="${OPTARG}" ;;
+    h) print_usage ;;
+    p) env_file="${OPTARG}" ;;
+    *) print_usage ;;
+  esac
+done
+
+announce "Sourcing customized environment in $customize_file"
+. "$customize_file"
+
+announce "Setting demo environment variable defaults"
+. "$env_file"
+
+announce "Deleting KinD cluster '${KIND_CLUSTER_NAME}'"
+if kind get clusters 2>/dev/null | grep -q "^${KIND_CLUSTER_NAME}$"; then
+  kind delete cluster --name "${KIND_CLUSTER_NAME}"
+else
+  echo "KinD cluster '${KIND_CLUSTER_NAME}' not found, skipping."
+fi
+
+announce "Removing local Docker registry '${DOCKER_LOCAL_REGISTRY_NAME}'"
+if docker inspect "${DOCKER_LOCAL_REGISTRY_NAME}" &>/dev/null; then
+  docker rm -f "${DOCKER_LOCAL_REGISTRY_NAME}"
+else
+  echo "Registry container '${DOCKER_LOCAL_REGISTRY_NAME}' not found, skipping."
+fi
+
+announce "Removing Docker network 'kind'"
+if docker network inspect kind &>/dev/null; then
+  docker network rm kind
+else
+  echo "Docker network 'kind' not found, skipping."
+fi
+
+announce "Pruning dangling Docker volumes"
+docker volume prune -f
+
+announce "Removing cloned demo scripts in temp/"
+rm -rf temp/
+
+announce "Cleanup complete!"
